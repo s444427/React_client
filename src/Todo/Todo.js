@@ -1,58 +1,47 @@
 import React from 'react';
 
-const greenStyle = {
-    backgroundColor: 'green',
-};
-
-const redStyle = {
-    backgroundColor: 'red',
-};
-
-
 class Todo extends React.Component {
     constructor(props) {
         super(props);
-        this.setDone = this.setDone.bind(this);
-        this.state = {done: null};
+        console.log("starting props: " + props);
+
+        this.state = {name: props.name, price: props.price};
     }
 
     static getDerivedStateFromProps(props, state) {
         if (state.done === null)
-            return {done: props.done}; else return {};
+            return {done: props.done};
+        else return {};
     }
 
-    setDone = () => {
-        if (this.state.done) {
-            this.setState({done: false}, this.props.update(this.props.id, this.state.done));
-        } else {
-            this.setState({done: true}, this.props.update(this.props.id, this.state.done));
-        }
-
+    setData = () => {
+        this.props.update(this.props.id, this.state.name, this.props.price)
     }
 
     render() {
 
-        const {value} = this.props;
-        const {done} = this.state;
+        const name = this.props.name;
+        const price = this.props.price;
 
         return (
             <React.Fragment>
-                {done === true ?
-                    <th style={greenStyle}>
-                       <textarea rows="4" cols="100"
-                                 value={value}
-                       />
-                    </th> :
-                    <th style={redStyle}>
+                    <td >
                         <textarea rows="4" cols="100"
-                                  value={value}
+                                  value={name}
+                                  onChange={this.setData}
                         />
-                    </th>}
-                <th>
-                    <button onClick={this.setDone}>
-                        Change status
+                    </td>
+                    <td>
+                        <textarea rows="4" cols="100"
+                                  value={price}
+                                  onChange={this.setData}
+                        />
+                    </td>
+                <td>
+                    <button onClick={this.setData}>
+                        Save changes
                     </button>
-                </th>
+                </td>
             </React.Fragment>
         )
 

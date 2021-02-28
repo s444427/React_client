@@ -5,51 +5,74 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class TodoList extends React.Component {
+
     constructor(props) {
         super(props);
-        let t1 = {id: 0, value: "Learn React", done: true};
-        let t2 = {id: 1, value: "Pass Programming Laboratory", done: false};
-        let t3 = {id: 2, value: "Have a nice holiday", done: false};
-        this.state = {todosList: [t1, t2, t3]};
         this.addTodo = this.addTodo.bind(this);
         this.counter = 2;
     };
 
+    //Initialise data
     componentDidMount() {
-        axios.get(`http://localhost:8080/todos`)
+
+        axios.get(`http://localhost:8080/api/products`, {
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        })
             .then(res => {
+                console.log("mam liste");
                 const todosList = res.data;
-                this.setState({todosList});
+                this.setState({todosList: todosList});
             })
     }
 
-    updateChild = (id, done) => {
+    //PUT TODO
+    // updateChild = (id) => {
+    //
+    //     let arrAfterUpdate = this.state.todosList.map(function (item) {
+    //         if(item.id === id)
+    //         return item;
+    //     });
+    //
+    //     let object = this.state.todosList.find(function (item) {
+    //         if (item.id === id)
+    //             return item;
+    //     });
+    //
+    //     console.log(object.name);
+    //     console.log(object.price);
+    //     axios.put(`http://localhost:8080/api/product`, object);
+    // };
+
+    updateChild = (id) => {
         let arrAfterUpdate = this.state.todosList.map(function (item) {
-            if (item.id === id) item.done = done;
             return item;
         });
 
         let object = arrAfterUpdate.find(function (item) {
-            if (item.id === id) return item;
+            if(item.id === id)
+                return item;
         });
 
         this.setState({todosList: arrAfterUpdate});
 
-        axios.put(`http://localhost:8080/todos/${object.id}`, object);
+        axios.put(`http://localhost:8080/api/product/${object.id}`, object);
 
         console.log(arrAfterUpdate);
     };
 
-
+    //POST - DONE
     addTodo = () => {
         this.counter++;
-        let newelement = {id: this.counter, value: this.state.newTodo, done: false};
+        let newelement = {id: this.counter, name: this.state.newTodo};
         this.setState(prevState => ({
             todosList: [...prevState.todosList, newelement]
         }));
-        axios.post(`http://localhost:8080/todos/`, newelement);
+        axios.post(`http://localhost:8080/api/product`, newelement);
     };
 
+    //DELETE - DONE
     handleRemove = id => {
         let object = this.state.todosList.find(function (item) {
             if (item.id === id) return item;
@@ -59,51 +82,68 @@ class TodoList extends React.Component {
         });
         this.setState({todosList: arrAfterDel});
 
-        axios.delete(`http://localhost:8080/todos/${object.id}`, object);
+        axios.delete(`http://localhost:8080/api/product/${object.id}`, object);
     }
 
     myChangeHandler = (event) => {
-        this.setState({newTodo: event.target.value});
+        this.setState({newTodo: event.target.name});
     }
 
+
+    //RENDER
     render() {
+
+        //server response
+        if (this.state == null) {
+            console.log("Render: null state");
+            return ("Nic nie ma")
+        }
+
+        console.log("After render: state")
+        console.log(this.state);
 
         const {todosList} = this.state;
 
         let todos = todosList.map(todo => {
             return (<tr key={todo.id}>
-                <Todo value={todo.value}
-                      done={todo.done}
+                <Todo name={todo.name}
+                      price={todo.price}
                       id={todo.id}
-                      update={(id, done) => this.updateChild(id, done)}/>
-                <th>
+                      update={(id) => this.updateChild(id)}/>
+                <td>
                     <button type="button" onClick={() => this.handleRemove(todo.id)}>
                         Remove
                     </button>
-                </th>
+                </td>
             </tr>);
         })
 
         return (
             <div className="TodoList">
-                <h1>Todo List {this.props.name}</h1>
+                <h1>{this.props.name}</h1>
                 <table className="table table-striped">
                     <thead className="thead-dark">
-                    <th scope="col">Todo</th>
-                    <th scope="col">Status</th>
-                    <th scope="col"></th>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Actions</th>
+                            <th scope="col"></th>
+                            {/*ostatnia jest na drugi przycisk*/}
+                        </tr>
                     </thead>
                     <tbody>
-                    {todos}
+                        {todos}
                     </tbody>
                 </table>
-                <p> My new todo </p>
+
+                {/*Sekcja pod tabelą - DONE*/}
+                <p> Add new product with name</p>
                 <input
                     type='text'
                     onChange={this.myChangeHandler}
                 />
                 <button onClick={this.addTodo}>
-                    AddTodo
+                    AddProduct
                 </button>
             </div>
         );
