@@ -15,11 +15,11 @@ class Todo extends React.Component {
     }
 
     setData = () => {
-        this.props.update(this.props.id)
+        this.props.update(this.props.id, this.props.name)
     }
 
     nameChanged(event) {
-        this.setState({newName: event.target.name});
+        this.setState({newName: event.target.name}), this.props.update(this.props.id, this.props.name);
     }
 
     render() {

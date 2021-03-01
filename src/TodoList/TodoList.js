@@ -73,13 +73,13 @@ class TodoList extends React.Component {
     //POST - DONE
     addTodo = () => {
         this.counter++;
-        let newElement = {id: this.counter, name: this.state.newTodo, done: false};
+        let newelement = {id: this.counter, name: this.state.newTodo};
         this.setState(prevState => ({
-            todosList: [...prevState.todosList, newElement]
+            todosList: [...prevState.todosList, newelement]
         }));
         console.log("addTodo object");
-        console.log(newElement);
-        axios.post(`http://localhost:8080/api/product`, newElement);
+        console.log(newelement);
+        axios.post(`http://localhost:8080/api/product`, newelement);
     };
 
     //DELETE - DONE
@@ -96,9 +96,9 @@ class TodoList extends React.Component {
     }
 
     myChangeHandler = (event) => {
-        this.setState({newTodo: event.target.name});
+        this.setState({newTodo: event.target.value});
         console.log("My change handler");
-        console.log(event.target.name);
+        console.log(event.target.value);
     }
 
 
