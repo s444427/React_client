@@ -9,7 +9,7 @@ class TodoList extends React.Component {
     constructor(props) {
         super(props);
         this.addTodo = this.addTodo.bind(this);
-        this.counter = 2;
+        this.counter = 20;
     };
 
     //Initialise data
@@ -27,49 +27,59 @@ class TodoList extends React.Component {
             })
     }
 
-    //PUT TODO
-    // updateChild = (id) => {
-    //
-    //     let arrAfterUpdate = this.state.todosList.map(function (item) {
-    //         if(item.id === id)
-    //         return item;
-    //     });
-    //
-    //     let object = this.state.todosList.find(function (item) {
-    //         if (item.id === id)
-    //             return item;
-    //     });
-    //
-    //     console.log(object.name);
-    //     console.log(object.price);
-    //     axios.put(`http://localhost:8080/api/product`, object);
-    // };
-
+    // PUT TODO
     updateChild = (id) => {
+
         let arrAfterUpdate = this.state.todosList.map(function (item) {
+            if(item.id === id)
             return item;
         });
 
-        let object = arrAfterUpdate.find(function (item) {
-            if(item.id === id)
+        let object = this.state.todosList.find(function (item) {
+            if (item.id === id)
                 return item;
         });
 
         this.setState({todosList: arrAfterUpdate});
 
+        console.log(object.name);
+        console.log(object.price);
         axios.put(`http://localhost:8080/api/product/${object.id}`, object);
-
-        console.log(arrAfterUpdate);
     };
+
+    // updateChild = (id) => {
+    //     let arrAfterUpdate = this.state.todosList.map(function (item) {
+    //         return item;
+    //     });
+    //
+    //     let object = arrAfterUpdate.find(function (item) {
+    //         if(item.id === id)
+    //             return item;
+    //     });
+    //
+    //     this.setState({todosList: arrAfterUpdate});
+    //
+    //     axios.put(`http://localhost:8080/api/product/${object.id}`, object,
+    //         {
+    //             headers: {
+    //                 'Access-Control-Allow-Origin': '*'
+    //             }
+    //         }
+    //         );
+    //
+    //     console.log(arrAfterUpdate);
+    // };
 
     //POST - DONE
     addTodo = () => {
         this.counter++;
-        let newelement = {id: this.counter, name: this.state.newTodo};
+        let newElement = {id: this.counter, name: this.state.newTodo, done: false};
         this.setState(prevState => ({
-            todosList: [...prevState.todosList, newelement]
+            todosList: [...prevState.todosList, newElement]
         }));
-        axios.post(`http://localhost:8080/api/product`, newelement);
+        console.log("addTodo object");
+        console.log(newElement);
+        axios.post(`http://localhost:8080/api/product`, newElement);
     };
 
     //DELETE - DONE
@@ -87,6 +97,8 @@ class TodoList extends React.Component {
 
     myChangeHandler = (event) => {
         this.setState({newTodo: event.target.name});
+        console.log("My change handler");
+        console.log(event.target.name);
     }
 
 
@@ -94,7 +106,7 @@ class TodoList extends React.Component {
     render() {
 
         //server response
-        if (this.state == null) {
+        if (this.state === null) {
             console.log("Render: null state");
             return ("Nic nie ma")
         }
@@ -103,6 +115,8 @@ class TodoList extends React.Component {
         console.log(this.state);
 
         const {todosList} = this.state;
+
+        const length = todosList.length;
 
         let todos = todosList.map(todo => {
             return (<tr key={todo.id}>
@@ -121,6 +135,7 @@ class TodoList extends React.Component {
         return (
             <div className="TodoList">
                 <h1>{this.props.name}</h1>
+
                 <table className="table table-striped">
                     <thead className="thead-dark">
                         <tr>
@@ -131,6 +146,7 @@ class TodoList extends React.Component {
                             {/*ostatnia jest na drugi przycisk*/}
                         </tr>
                     </thead>
+
                     <tbody>
                         {todos}
                     </tbody>
@@ -145,6 +161,12 @@ class TodoList extends React.Component {
                 <button onClick={this.addTodo}>
                     AddProduct
                 </button>
+
+                <br/>
+                <br/>
+                <p>
+                    Number of products: {length}
+                </p>
             </div>
         );
     }

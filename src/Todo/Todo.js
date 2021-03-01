@@ -15,7 +15,11 @@ class Todo extends React.Component {
     }
 
     setData = () => {
-        this.props.update(this.props.id, this.state.name, this.props.price)
+        this.props.update(this.props.id)
+    }
+
+    nameChanged(event) {
+        this.setState({newName: event.target.name});
     }
 
     render() {
@@ -28,7 +32,7 @@ class Todo extends React.Component {
                     <td >
                         <textarea rows="4" cols="100"
                                   value={name}
-                                  onChange={this.setData}
+                                  onChange={this.nameChanged}
                         />
                     </td>
                     <td>
